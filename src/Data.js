@@ -1,6 +1,7 @@
 import React, { useEffect, useReducer, useState } from "react";
 import axios from "axios";
 import useAsync from "./useAsync";
+import styled from "@emotion/styled";
 
 async function getItems() {
   const r = await axios.get(
@@ -32,7 +33,7 @@ export default function Data() {
   if (!dataItems || !dataMap) return null;
 
   return (
-    <div>
+    <BackgroundImg>
       <div>
         <div>{dataMap.current.map}</div>
         <div>{dataMap.current.asset}</div>
@@ -73,6 +74,12 @@ export default function Data() {
           <div>Cost: {JSON.stringify(dataItems[1].bundleContent[1].cost)}</div>
         </div>
       </div>
-    </div>
+    </BackgroundImg>
   );
 }
+
+const BackgroundImg = styled.div`
+  width: 100vw;
+  height: 100vh;
+  background-color: red;
+`;
