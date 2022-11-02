@@ -35,6 +35,7 @@ export default function Data() {
     <div>
       <div>
         <div>{dataMap.current.map}</div>
+        <div>{dataMap.current.asset}</div>
         <div>Daily Crafting</div>
         <div>
           <img
