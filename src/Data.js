@@ -2,6 +2,8 @@ import React, { useEffect, useReducer, useState } from "react";
 import axios from "axios";
 import useAsync from "./useAsync";
 import styled from "@emotion/styled";
+import { css } from "@emotion/react";
+import { ReactComponent as CostIcon } from "./CostIcon.svg";
 
 async function getItems() {
   const r = await axios.get(
@@ -32,54 +34,143 @@ export default function Data() {
   if (errorItems || errorMap) return <div>Error</div>;
   if (!dataItems || !dataMap) return null;
 
+  const MAP_URL = dataMap.current.asset;
+
   return (
-    <BackgroundImg>
-      <div>
-        <div>{dataMap.current.map}</div>
-        <div>{dataMap.current.asset}</div>
-        <div>Daily Crafting</div>
-        <div>
-          <img
-            style={{ height: "64px", width: "64px" }}
-            src={dataItems[0].bundleContent[0].itemType.asset}
-            alt={dataItems[0].bundleContent[0].itemType.name}
-          />
-          <div>Cost: {dataItems[0].bundleContent[0].cost}</div>
-        </div>
-        <div>
-          <img
-            style={{ height: "64px", width: "64px" }}
-            src={dataItems[0].bundleContent[1].itemType.asset}
-            alt={JSON.stringify(dataItems[0].bundleContent[1].itemType.name)}
-          />
-          <div>Cost: {JSON.stringify(dataItems[0].bundleContent[1].cost)}</div>
-        </div>
-      </div>
-      <div>
-        <div>Weekly Crafting</div>
-        <div>
-          <img
-            style={{ height: "64px", width: "64px" }}
-            src={dataItems[1].bundleContent[0].itemType.asset}
-            alt={JSON.stringify(dataItems[1].bundleContent[0].itemType.name)}
-          />
-          <div>Cost: {JSON.stringify(dataItems[1].bundleContent[0].cost)}</div>
-        </div>
-        <div>
-          <img
-            style={{ height: "64px", width: "64px" }}
-            src={dataItems[1].bundleContent[1].itemType.asset}
-            alt={JSON.stringify(dataItems[1].bundleContent[1].itemType.name)}
-          />
-          <div>Cost: {JSON.stringify(dataItems[1].bundleContent[1].cost)}</div>
-        </div>
-      </div>
+    <BackgroundImg
+      style={{
+        backgroundImage: `url(${MAP_URL})`,
+        backgroundColor: "grey",
+        objectFit: "scale-down",
+      }}
+    >
+      <MapTitle>{dataMap.current.map}</MapTitle>
+      <ItemRow>
+        <CraftingItems>
+          <SubTitle>Weekly Crafting</SubTitle>
+          <ItemGroupFrame>
+            <ItemFrame>
+              <ItemImg
+                src={dataItems[1].bundleContent[0].itemType.asset}
+                alt={JSON.stringify(
+                  dataItems[1].bundleContent[0].itemType.name
+                )}
+              />
+              <CostFrame>
+                <CostIcon />
+                {JSON.stringify(dataItems[1].bundleContent[0].cost)}
+              </CostFrame>
+            </ItemFrame>
+            <ItemFrame>
+              <ItemImg
+                src={dataItems[1].bundleContent[1].itemType.asset}
+                alt={JSON.stringify(
+                  dataItems[1].bundleContent[1].itemType.name
+                )}
+              />
+              <CostFrame>
+                <CostIcon />
+                {JSON.stringify(dataItems[1].bundleContent[1].cost)}
+              </CostFrame>
+            </ItemFrame>
+          </ItemGroupFrame>
+        </CraftingItems>
+        <CraftingItems>
+          <SubTitle>Daily Crafting</SubTitle>
+          <ItemGroupFrame>
+            <ItemFrame>
+              <ItemImg
+                src={dataItems[0].bundleContent[0].itemType.asset}
+                alt={dataItems[0].bundleContent[0].itemType.name}
+              />
+              <CostFrame>
+                <CostIcon />
+                {dataItems[0].bundleContent[0].cost}
+              </CostFrame>
+            </ItemFrame>
+            <ItemFrame>
+              <ItemImg
+                src={dataItems[0].bundleContent[1].itemType.asset}
+                alt={JSON.stringify(
+                  dataItems[0].bundleContent[1].itemType.name
+                )}
+              />
+              <CostFrame>
+                <CostIcon />
+                {JSON.stringify(dataItems[0].bundleContent[1].cost)}
+              </CostFrame>
+            </ItemFrame>
+          </ItemGroupFrame>
+        </CraftingItems>
+      </ItemRow>
     </BackgroundImg>
   );
 }
 
+const CostFrame = styled.div`
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  color: #03fef7;
+  font-size: 18px;
+`;
+
 const BackgroundImg = styled.div`
   width: 100vw;
   height: 100vh;
-  background-color: red;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+`;
+
+const SubTitle = styled.div`
+  font-size: 20px;
+  color: white;
+  font-weight: 600;
+`;
+
+const ItemImg = styled.img`
+  height: 64px;
+  width: 64px;
+  border-radius: 8px;
+  border: 2px solid white;
+`;
+
+const ItemFrame = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 8px;
+  margin-right: 16px;
+`;
+
+const ItemGroupFrame = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 4px;
+`;
+
+const ItemRow = styled.div`
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: flex-end;
+  position: absolute;
+  bottom: 36px;
+  right: 36px;
+`;
+
+const CraftingItems = styled.div`
+  margin-right: 16px;
+`;
+
+const MapTitle = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(100% - 64px);
+  font-size: 64px;
+  font-weight: 800;
+  color: white;
 `;
