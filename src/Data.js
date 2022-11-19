@@ -4,6 +4,7 @@ import useAsync from "./useAsync";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import { ReactComponent as CostIcon } from "./CostIcon.svg";
+import Timeer from "./Timer";
 
 async function getItems() {
   const r = await axios.get(
@@ -34,6 +35,13 @@ export default function Data() {
   if (errorItems || errorMap) return <div>Error</div>;
   if (!dataItems || !dataMap) return null;
 
+  const rSec = dataMap.current.remainingSecs;
+  // const rSec = 5400;
+
+  const TimeMin = rSec / 60 > 60 ? rSec / 60 - 60 : rSec / 60;
+  const TimeHour = rSec / 60 / 60;
+  const TimeSec = (TimeMin % 1) * 60;
+
   const MAP_URL = dataMap.current.asset;
 
   return (
@@ -44,7 +52,14 @@ export default function Data() {
         objectFit: "scale-down",
       }}
     >
-      <MapTitle>{dataMap.current.map}</MapTitle>
+      <TitleFrame>
+        <MapTitle>{dataMap.current.map}</MapTitle>
+        <Timeer
+          hh={parseInt(TimeHour)}
+          mm={parseInt(TimeMin)}
+          ss={parseInt(TimeSec)}
+        />
+      </TitleFrame>
       <ItemRow>
         <CraftingItems>
           <SubTitle>Weekly Crafting</SubTitle>
@@ -107,6 +122,21 @@ export default function Data() {
   );
 }
 
+const TitleFrame = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  gap: 24px;
+
+  height: 100%;
+`;
+
+const Help = styled.div`
+  color: white;
+`;
+
 const CostFrame = styled.div`
   margin-top: 4px;
   display: flex;
@@ -166,10 +196,6 @@ const CraftingItems = styled.div`
 `;
 
 const MapTitle = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: calc(100% - 64px);
   font-size: 64px;
   font-weight: 800;
   color: white;
