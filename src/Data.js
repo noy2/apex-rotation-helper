@@ -5,6 +5,7 @@ import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import { ReactComponent as CostIcon } from "./CostIcon.svg";
 import Timeer from "./Timer";
+import DataSkeleton from "./Data.skeleton";
 
 async function getItems() {
   const r = await axios.get(
@@ -31,7 +32,7 @@ export default function Data() {
   } = stateItems;
   const { loading: loadingMap, data: dataMap, error: errorMap } = stateMap;
 
-  if (loadingItems || loadingMap) return <div>Loading...</div>;
+  if (loadingItems || loadingMap) return <DataSkeleton />;
   if (errorItems || errorMap) return <div>Error</div>;
   if (!dataItems || !dataMap) return null;
 
