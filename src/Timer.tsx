@@ -31,13 +31,13 @@ export default function Timeer({ hh, mm, ss }) {
   }, [hour, min, sec]);
 
   return (
-    <Text>
+    <Label>
       {hour} : {min < 10 ? `0${min}` : min} : {sec < 10 ? `0${sec}` : sec}
-    </Text>
+    </Label>
   );
 }
 
-const Text = styled.div`
+const Label = styled.div`
   color: rgba(255, 255, 255, 0.8);
   font-size: 48px;
   font-weight: 600;

@@ -1,29 +1,73 @@
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useEffect } from "react";
 import axios from "axios";
 import useAsync from "./useAsync";
 import styled from "@emotion/styled";
-import { css } from "@emotion/react";
 import { ReactComponent as CostIcon } from "./CostIcon.svg";
 import Timeer from "./Timer";
 import DataSkeleton from "./Data.skeleton";
 
+interface Item {
+  bundle: string;
+  start: number;
+  end: number;
+  startDate: string;
+  endDate: string;
+  bundleType: string;
+  bundleContent: bundleContent[];
+}
+
+interface bundleContent {
+  item: string;
+  cost: number;
+  itemType: {
+    name: string;
+    rarity: string;
+    asset: string;
+    rarityHex: string;
+  };
+}
+
+interface Map {
+  current: Map1 & {
+    asset: string;
+    remainingSecs: number;
+    remainingMins: number;
+    remainingTimer: string;
+  };
+  next: Map1;
+}
+
+interface Map1 {
+  start: number;
+  end: number;
+  readableDate_start: string;
+  readableDate_end: string;
+  map: string;
+  code: string;
+  DurationInSecs: number;
+  DurationInMinutes: number;
+}
+
 async function getItems() {
-  const r = await axios.get(
+  const r = await axios.get<Item[]>(
     "https://apex-legends-api-wrapper.hw0k.workers.dev/crafting"
   );
   return r.data;
 }
 
 async function getMap() {
-  const r = await axios.get(
+  const r = await axios.get<Map>(
     "https://apex-legends-api-wrapper.hw0k.workers.dev/map"
   );
   return r.data;
 }
 
 export default function Data() {
-  const [stateItems, refetchItems] = useAsync(getItems, []);
-  const [stateMap, refetchMap] = useAsync(getMap, []);
+  const [stateItems, refetchItems] = useAsync<Item[], typeof getItems>(
+    getItems,
+    []
+  );
+  const [stateMap, refetchMap] = useAsync<Map, typeof getMap>(getMap, []);
 
   const {
     loading: loadingItems,
@@ -37,18 +81,15 @@ export default function Data() {
   if (!dataItems || !dataMap) return null;
 
   const rSec = dataMap.current.remainingSecs;
-  // const rSec = 5400;
 
-  const TimeMin = rSec / 60 > 60 ? rSec / 60 - 60 : rSec / 60;
-  const TimeHour = rSec / 60 / 60;
-  const TimeSec = (TimeMin % 1) * 60;
-
-  const MAP_URL = dataMap.current.asset;
+  const TimeMin: number = rSec / 60 > 60 ? rSec / 60 - 60 : rSec / 60;
+  const TimeHour: number = rSec / 60 / 60;
+  const TimeSec: number = (TimeMin % 1) * 60;
 
   return (
     <BackgroundImg
       style={{
-        backgroundImage: `url(${MAP_URL})`,
+        backgroundImage: `url(${dataMap.current.asset})`,
         backgroundColor: "grey",
         objectFit: "scale-down",
       }}
@@ -56,9 +97,9 @@ export default function Data() {
       <TitleFrame>
         <MapTitle>{dataMap.current.map}</MapTitle>
         <Timeer
-          hh={parseInt(TimeHour)}
-          mm={parseInt(TimeMin)}
-          ss={parseInt(TimeSec)}
+          hh={Math.floor(TimeHour)}
+          mm={Math.floor(TimeMin)}
+          ss={Math.floor(TimeSec)}
         />
       </TitleFrame>
       <ItemRow>
